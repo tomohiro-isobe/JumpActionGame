@@ -28,6 +28,11 @@ public class ResultScreen extends ScreenAdapter {
         mGame = game;
         mScore = score;
 
+        // AdModを表示する
+        if (mGame.mRequestHandler != null) {
+            mGame.mRequestHandler.showAds(true);
+        }
+
         // 背景の準備
         Texture bgTexture = new Texture("resultback.png");
         mBg = new Sprite(new TextureRegion(bgTexture, 0, 0, 540, 810));
@@ -61,6 +66,9 @@ public class ResultScreen extends ScreenAdapter {
         mGame.batch.end();
 
         if (Gdx.input.justTouched()) {
+            if (mGame.mRequestHandler != null) {
+                mGame.mRequestHandler.showAds(false);
+            }
             mGame.setScreen(new GameScreen(mGame));
         }
     }

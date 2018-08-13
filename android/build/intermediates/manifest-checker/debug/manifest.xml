@@ -8,6 +8,10 @@
         android:minSdkVersion="9"
         android:targetSdkVersion="28" />
 
+    <!-- AdModに必要なパーミッションの設定 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:debuggable="true"
@@ -15,6 +19,12 @@
         android:label="@string/app_name"
         android:testOnly="true"
         android:theme="@style/GdxTheme" >
+
+        <!-- AdModに必要なメタデータを設定する -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <activity
             android:name="jp.techacademy.tomohiro.isobe.jumpactiongame.AndroidLauncher"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize"
@@ -26,6 +36,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- AdModが使うActivityを定義する -->
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:theme="@android:style/Theme.Translucent" />
 
         <provider
             android:name="com.android.tools.ir.server.InstantRunContentProvider"
