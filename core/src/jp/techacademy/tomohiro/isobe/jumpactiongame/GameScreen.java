@@ -3,6 +3,7 @@ package jp.techacademy.tomohiro.isobe.jumpactiongame;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -44,8 +45,10 @@ public class GameScreen extends ScreenAdapter {
     Random mRandom;
     List<Step> mSteps;
     List<Star> mStars;
+    List<Enemy> mEnemies; // 敵オブジェ
     Ufo mUfo;
     Player mPlayer;
+    Enemy mEnemy;
 
     float mHeightSoFar; // プレイヤーが地面からどれだけ離れたか
     Vector3 mTouchPoint; // タッチイベントを保持
@@ -81,6 +84,7 @@ public class GameScreen extends ScreenAdapter {
         mRandom = new Random();
         mSteps = new ArrayList<Step>();
         mStars = new ArrayList<Star>();
+        mEnemies = new ArrayList<Enemy>();
         mGameState = GAME_STATE_READY;
         mTouchPoint = new Vector3();
         mFont = new BitmapFont(Gdx.files.internal("font.fnt"), Gdx.files.internal("font.png"), false);
@@ -130,6 +134,11 @@ public class GameScreen extends ScreenAdapter {
             mStars.get(i).draw(mGame.batch);
         }
 
+        // Enemy
+        for (int i = 0; i < mEnemies.size(); i++) {
+            mEnemies.get(i).draw(mGame.batch);
+        }
+
         // UFO
         mUfo.draw(mGame.batch);
 
@@ -162,6 +171,8 @@ public class GameScreen extends ScreenAdapter {
         Texture starTexture = new Texture("star.png");
         Texture playerTexture = new Texture("uma.png");
         Texture ufoTexture = new Texture("ufo.png");
+        Texture enemyTexture = new Texture("dragon.png");
+
 
         // StepとStarをゴールの高さまで配置していく
         float y = 0;
@@ -179,6 +190,12 @@ public class GameScreen extends ScreenAdapter {
                 Star star = new Star(starTexture, 0 , 0, 72, 72);
                 star.setPosition(step.getX() + mRandom.nextFloat(), step.getY() + Star.STAR_HEIGHT + mRandom.nextFloat() * 3);
                 mStars.add(star);
+            }
+
+            if (mRandom.nextFloat() > 0.6f) {
+                Enemy enemy = new Enemy(enemyTexture, 0, 0, 128, 128);
+                enemy.setPosition(step.getX() + mRandom.nextFloat(), step.getY() + Enemy.ENEMY_HEIGHT + mRandom.nextFloat() * 4 );
+                mEnemies.add(enemy);
             }
 
             y += (maxJumpHeight - 0.5f);
@@ -287,6 +304,21 @@ public class GameScreen extends ScreenAdapter {
             }
         }
 
+        // Enemyとの当たり判定
+        for (int i = 0; i < mEnemies.size(); i++) {
+            Enemy enemy = mEnemies.get(i);
+
+            if (mPlayer.getBoundingRectangle().overlaps(enemy.getBoundingRectangle())) {
+                Sound sound = Gdx.audio.newSound(Gdx.files.internal("data/explosion06.wav"));
+                sound.play(1.0f);
+                
+                Gdx.app.log("JampActionGame", "GAMEOVER");
+
+                mGameState = GAME_STATE_GAMEOVER;
+                return;
+            }
+
+        }
         // Stepとの当たり判定
         // 上昇中はStepとの当たり判定を確認しない
         if (mPlayer.velocity.y > 0) {

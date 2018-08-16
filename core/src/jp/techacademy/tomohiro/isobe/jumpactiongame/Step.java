@@ -2,7 +2,7 @@ package jp.techacademy.tomohiro.isobe.jumpactiongame;
 
 import com.badlogic.gdx.graphics.Texture;
 
-public class Step extends GameObject {
+public class Step extends GameObject  {
     // 横幅、高さ
     public static final float STEP_WIDTH = 2.0f;
     public static final float STEP_HEIGHT = 0.5f;
